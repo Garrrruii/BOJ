@@ -1,4 +1,4 @@
-//exchagne
+//exchange
 #include <cstdio>
 #include <algorithm>
 #include <queue>
