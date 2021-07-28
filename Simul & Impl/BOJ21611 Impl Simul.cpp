@@ -13,7 +13,7 @@ int main() {
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) scanf("%d", &b[i][j]);
     }
-    
+
     int d, s, x, y, ANS = 0;
     while (M--) {
         scanf("%d%d", &d, &s);
@@ -32,8 +32,8 @@ int main() {
         else {
             while (s--) ++x, b[y][x] = 0;
         }
-       
-        // Pop and Move
+
+        // Count Marvel
         x = y = (N >> 1) - 1;
         for (int K = 2; K < N; K += 2) {
             for (int dir = 0; dir < 4; ++dir) {
@@ -41,24 +41,36 @@ int main() {
                     x += dx[dir], y += dy[dir];
                     if (!b[y][x]) continue;
 
+                    // 구슬 넣음
                     if (!V.empty() && b[y][x] == V.back().first) V.back().second++;
-                    else {
-                        // 새로운 구슬 삽입, back의 개수가 4이상이면 pop, 한 번 더 확인
-                        if (!V.empty() && V.back().second > 3) {
-                            ANS += V.back().first * V.back().second; V.pop_back();
-
-                            if (!V.empty() && b[y][x] == V.back().first) V.back().second++;
-                            else V.push_back({ b[y][x],1 });
-                        }
-                        else V.push_back({ b[y][x],1 });
-                    }
+                    else V.push_back({ b[y][x],1 });
                 }
             }
             --x, --y; //↖로 이동
         }
 
-        // Rearrange
+        // Pop
         int vsize = V.size(), vi = 0;
+        while (1) {
+            for (vi = vsize - 1; vi >= 0; --vi) {
+                if (V[vi].second > 3) {
+                    ANS += V[vi].first * V[vi].second;
+                    V.erase(V.begin() + vi);
+                }
+            }
+            if (vsize == V.size()) break;
+            vsize = V.size();
+            for (int vi = vsize - 2; vi >= 0; --vi) {
+                if (V[vi + 1].first == V[vi].first) {
+                    V[vi].second += V[vi + 1].second;
+                    V.erase(V.begin() + vi + 1);
+                }
+            }
+            vsize = V.size();
+        }
+
+        // Rearrange
+        vsize = V.size(); vi = 0;
         x = y = (N >> 1) - 1;
         for (int K = 2; K < N; K += 2) {
             for (int dir = 0; dir < 4; ++dir) {
@@ -76,12 +88,20 @@ int main() {
             --x, --y;
         }
         V.clear();
-
- /*     printf("\nRearrange Done:\n");
-        for (int i = 0; i < N; ++i) {
-            for (int j = 0; j < N; ++j) printf("%d ", b[i][j]);
-            printf("\n");
-        }*/
     }
     printf("%d", ANS); return 0;
 }
+/*
+9 1
+0 0 0 0 0 0 0 0 0
+3 2 1 3 1 3 3 3 0
+1 3 3 3 1 3 3 1 0
+0 2 2 2 1 2 2 1 0
+0 1 2 1 0 2 2 1 0
+0 3 3 1 1 2 2 2 0
+0 3 3 3 1 1 1 2 0
+0 1 1 1 3 3 3 2 0
+0 0 0 0 0 0 0 0 0
+1 3
+(97)
+*/
