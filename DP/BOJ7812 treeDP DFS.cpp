@@ -2,25 +2,26 @@
 #include <vector>
 using namespace std;
 
-typedef pair<pair<int, int>, int> ppiii;
-
 bool vis[10000];
-vector<ppiii> E[10000]; //{{who,cost},child_num}
-int N;
+int N, cnum[10000];
 
-pair<int,long long> dfs_tree(int cur,long long dist) {
+typedef pair<int, int> pii;
+vector<pii> E[10000];
+
+pair<int,long long> dfs_tree(int cur) {
 	vis[cur] = true;
 	int child_num = 1;
+	long long dist = 0;
 	pair<int, long long> ret;
 
-	for (ppiii& e : E[cur]) {
-		int nxt = e.first.first;
+	for (pii e : E[cur]) {
+		int nxt = e.first;
 		if (vis[nxt]) continue;
 
-		ret = dfs_tree(nxt, 0);
-		e.second = ret.first;
+		ret = dfs_tree(nxt);
+		cnum[nxt] = ret.first;
 		child_num += ret.first;
-		dist += (1LL * e.second * e.first.second + ret.second);
+		dist += (1LL * e.second * ret.first + ret.second);
 	}
 	
 	vis[cur] = false;
@@ -31,13 +32,13 @@ long long dfs_dist(int cur, long long ans) {
 //	cout << ans << " at " << cur << "\n";
 
 	long long rem = ans;
-	for (ppiii e : E[cur]) {
-		int nxt = e.first.first;
+	for (pii e : E[cur]) {
+		int nxt = e.first;
 		if (vis[nxt]) continue;
 	
-		int cnt = N - (e.second << 1);
+		int cnt = N - (cnum[nxt] << 1);
 		if (cnt > 0) continue;
-		long long tmp = dfs_dist(nxt, rem + 1LL * e.first.second * cnt);
+		long long tmp = dfs_dist(nxt, rem + 1LL * e.second * cnt);
 		ans = (ans < tmp) ? ans : tmp;
 	}
 
@@ -54,11 +55,12 @@ int main() {
 		if (!N) return 0;
 		for (int i = 1; i < N; ++i) {
 			cin >> a >> b >> c;
-			E[a].push_back({ {b,c},0 });
-			E[b].push_back({ {a,c},0 });
+			E[a].push_back({ b,c });
+			E[b].push_back({ a,c });
 		}
-		cout << dfs_dist(0, dfs_tree(0,0).second) << "\n";
+		cout << dfs_dist(0, dfs_tree(0).second) << "\n";
 
+		for (int i = 0; i < N; ++i) cnum[i] = 0;
 		for (int i = 0; i < N; ++i) E[i].clear();
 	}
 }
