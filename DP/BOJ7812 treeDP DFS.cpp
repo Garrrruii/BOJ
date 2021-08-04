@@ -17,6 +17,7 @@ long long dfs(int cur) {
 		int cnt = dfs(e.first);
 		child_num += cnt;
 		ANS += 1LL * e.second * ((cnt << 1) < N ? cnt : N - cnt);
+		// 중심 정점이 cur쪽인지 nxt(e.second)쪽인지 결정
 	}
 
 	vis[cur] = false;
