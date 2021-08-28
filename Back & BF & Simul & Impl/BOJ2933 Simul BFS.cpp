@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <queue>
-#include <set>
 #include <algorithm>
 using namespace std;
 
@@ -53,6 +52,7 @@ int main() {
 					int cj = Q.front().second; Q.pop();
 					S[landed][cj].push_back(ci);
 
+					// for ni=ci+di[d], nj=cj+dj[d]
 					if (ci && !vis[ci - 1][cj]) Q.push({ ci - 1,cj }), vis[ci - 1][cj] = true;
 					if (ci < R - 1 && !vis[ci + 1][cj]) Q.push({ ci + 1,cj }), vis[ci + 1][cj] = true;
 					if (cj && !vis[ci][cj - 1]) Q.push({ ci,cj - 1 }), vis[ci][cj - 1] = true;
