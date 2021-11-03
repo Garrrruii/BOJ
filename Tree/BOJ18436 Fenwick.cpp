@@ -1,3 +1,4 @@
+//array and query 37
 #include <iostream>
 using namespace std;
 
